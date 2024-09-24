@@ -1,39 +1,44 @@
 import {View, Text, ScrollView, TouchableOpacity, Image, Alert} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from "react-native-safe-area-context";
-import FormField from "../../components/FormField";
-import CustomButton from "../../components/CustomButton";
-import {Video, ResizeMode} from "expo-av";
-import {router} from 'expo-router'
-import {icons} from '../../constants'
-
-import * as DocumentPicker from "expo-document-picker"
-import {createVideo, getUserPosts} from "../../lib/appwrite";
+import BackToHome from "../../components/BackToHome";
 import {useGlobalContext} from "../../context/GlobalProvider";
-import * as ImagePicker from "expo-image-picker";
 import useAppwrite from "../../lib/useAppwrite";
+import {getEditPost, updatePost} from "../../lib/appwrite";
+import FormField from "../../components/FormField";
+import {ResizeMode, Video} from "expo-av";
+import {icons} from "../../constants";
+import CustomButton from "../../components/CustomButton";
+import {router} from "expo-router";
+import * as ImagePicker from "expo-image-picker";
 
-const EditPost = ({postId}) => {
-    // const {data: initialPosts,refresh} = useAppwrite(() => getUserPosts(user.$id));
-    // // Локальное состояние для управления постами
-    // const [posts, setPosts] = useState([]);
 
-    useEffect(()=>{
-        setPosts(initialPosts)
-    },[initialPosts])
-    const {user} = useGlobalContext()
+const editPost = () => {
 
+    const {editPostId} = useGlobalContext()
     const [uploading, setUploading] = useState(false)
+
+    const {data: post, refresh} = useAppwrite(() => getEditPost(editPostId))
 
     const [form, setForm] = useState({
         title: '',
         video: null,
         thumbnail: null,
-        promt: ''
+        promt: '',
+
     })
+    useEffect(() => {
+        setForm({
+            title: post.title,
+            video: post.video,
+            thumbnail: post.thumbnail,
+            promt: post.promt,
+        })
+
+    }, [post])
 
     const openPicker = async (selectType) => {
-
+        setUploading(true)
         // const result = await DocumentPicker.getDocumentAsync({
         //     type: selectType === 'image'
         //         ? ['image/png', 'image/jpg','image/jpeg']
@@ -63,46 +68,52 @@ const EditPost = ({postId}) => {
         //     })
         // }
 
+        setUploading(false)
     }
 
+
     const submit = async () => {
-        console.log('uploading')
         if (!form.title || !form.video || !form.thumbnail || !form.promt) {
             return Alert.alert('Please fill in all the fields')
         }
-
+        // console.log('submit')
         setUploading(true)
 
         try {
-            await createVideo({
-                ...form, userId: user.$id
+
+
+            await updatePost({
+                ...form, postId: editPostId, userId: post.$collectionId
             })
 
+            Alert.alert('Success', 'Post Update')
+            // router.push('/profile')
 
-            Alert.alert('Success', 'Post uploaded successfully')
-            router.push('/home')
         } catch (error) {
+
             Alert.alert('Error', error.message)
+
         } finally {
-            setForm({
-                title: '',
-                video: null,
-                thumbnail: null,
-                promt: ''
-            })
+            // setForm({
+            //     title: '',
+            //     video: null,
+            //     thumbnail: null,
+            //     promt: ''
+            // })
             setUploading(false)
         }
 
 
     }
-
+    console.log('post',post)
     return (
         <SafeAreaView className={`bg-primary h-full`}>
             <ScrollView className={`px-4 my-6`}>
+                <BackToHome/>
                 <Text
                     className={`text-2xl text-white font-psemibold mb-5`}
                 >
-                    Upload Video
+                    Edit Video
                 </Text>
                 <FormField
                     title={`Video Title`}
@@ -126,7 +137,7 @@ const EditPost = ({postId}) => {
                     >
                         {form.video ? (
                             <Video
-                                source={{uri: form.video.uri}}
+                                source={{uri: form.video.uri ? form.video.uri : form.video}}
                                 className={`w-full h-64 rounded-2xl`}
                                 // useNativeControls
                                 resizeMode={ResizeMode.COVER}
@@ -164,7 +175,7 @@ const EditPost = ({postId}) => {
                     >
                         {form.thumbnail ? (
                             <Image
-                                source={{uri: form.thumbnail.uri}}
+                                source={{uri: form.thumbnail.uri ? form.thumbnail.uri :form.thumbnail}}
                                 className={`w-full h-64 rounded-2xl`}
                                 resizeMode="contain"
                             />
@@ -198,7 +209,7 @@ const EditPost = ({postId}) => {
 
 
                 <CustomButton
-                    title={`Submit & Publish`}
+                    title={`Submit & Edit post`}
                     containerStyle={`mt-10`}
                     handlePress={submit}
                     isLoading={uploading}
@@ -208,4 +219,4 @@ const EditPost = ({postId}) => {
         </SafeAreaView>
     )
 }
-export default EditPost;
+export default editPost;

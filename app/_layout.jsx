@@ -42,6 +42,10 @@ const RootLayout = () => {
                     name="index"
                     options={{headerShown: false}}
                 />
+                {/*<Stack.Screen*/}
+                {/*    name="edit-post/editPost"*/}
+                {/*    options={{headerShown: false}}*/}
+                {/*/>*/}
 
                 <Stack.Screen
                     name='(auth)'
@@ -54,6 +58,7 @@ const RootLayout = () => {
                 />
 
                 <Stack.Screen name="search/[query]" options={{ headerShown: false }} />
+                <Stack.Screen name="edit_post/editPost" options={{ headerShown: false }} />
             </Stack>
         </GlobalProvider>
     )

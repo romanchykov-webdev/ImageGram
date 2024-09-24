@@ -1,10 +1,12 @@
-import {View, Text, Image, TouchableOpacity} from 'react-native';
+import {View, Text, Image, TouchableOpacity, Alert} from 'react-native';
 
 import {icons} from '../constants';
 import {useState} from "react";
 import {ResizeMode, Video} from "expo-av";
 import {deletePost} from "../lib/appwrite";
 import editIcon from "../assets/icons/editIcon.png";
+import {Link, router} from "expo-router";
+import {useGlobalContext} from "../context/GlobalProvider";
 
 
 const VideoCard = ({
@@ -21,10 +23,18 @@ const VideoCard = ({
                    }) => {
 
     const [play, setPlay] = useState(false)
+    const {setEditPostId} = useGlobalContext()
 
+
+    const goToEditPost = (postId) => {
+        setEditPostId(postId)
+        router.push(`/edit_post/editPost`)
+        // console.log('postId',postId)
+    }
 
     // console.log('thumbnail',thumbnail)
     return (
+
         <View
             className="flex-col items-center px-4 mb-14"
         >
@@ -67,7 +77,7 @@ const VideoCard = ({
                 >
                     {/* Кнопка для отображения heard */}
                     {
-                        userId !== creatorId &&(
+                        userId !== creatorId && (
                             <>
                                 <TouchableOpacity
                                     className={`ml-5 p-2`}
@@ -110,7 +120,8 @@ const VideoCard = ({
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     className={`ml-5 p-2`}
-                                    onPress={() => console.log('postId',postId)}
+                                    // onPress={() => console.log('postId',postId)}
+                                    onPress={()=>goToEditPost(postId)}
                                 >
                                     <Image
                                         source={icons.editIcon}

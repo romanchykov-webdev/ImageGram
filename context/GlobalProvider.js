@@ -11,6 +11,8 @@ const GlobalProvider = ({children}) => {
 
     const [user, setUser] = useState(null);
 
+    const [editPostId, setEditPostId] = useState(null)
+
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(()=>{
@@ -41,6 +43,8 @@ const GlobalProvider = ({children}) => {
                 user,
                 setUser,
                 isLoading,
+                setEditPostId,
+                editPostId
             }}
         >
             {children}
