@@ -1,0 +1,26 @@
+
+npx expo start -c
+
+
+
+
+
+
+
+
+npm install nativewind
+npm install nativewind
+npm install --save-dev tailwindcss@3.3.2
+
+
+// server
+0)Project ID-aoraSerioga
+1)Package Name - com.serioga.aora
+2)Aora_my- 66ebddaa003a28e0670b
+3)Create database-serioga_aora-66ebdfca001d99f70dd2
+4)database - users-66ebe01200001d47f061
+5)database - videos-66ebe08c002b8ff7c2d5
+6)store - files - 66ebe45c002eadfe69c2
+
+
+
